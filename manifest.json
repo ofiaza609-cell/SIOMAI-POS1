@@ -1,0 +1,9 @@
+{
+  "name": "One SIOMAi POS",
+  "short_name": "SIOMAi POS", 
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#FF6B35",
+  "theme_color": "#FF6B35",
+  "icons": [{"src": "icon-192.png","sizes": "192x192","type": "image/png"}]
+}
