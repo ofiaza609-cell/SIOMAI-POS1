@@ -3,404 +3,370 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>One SIOMAi POS</title>
-<link rel="manifest" href="manifest.json">
+<title>One SIOMAi POS V3</title>
 <meta name="theme-color" content="#FF6B35">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial; }
 body { background: #f5f5f5; padding-bottom: 20px; padding-top: 60px; }
 .header { background: #FF6B35; color: white; padding: 12px; text-align: center; font-size: 18px; font-weight: bold; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
-.summary { background: #FF8C42; color: white; margin: 8px; padding: 12px; border-radius: 8px; position: relative; z-index: 1; }
+.summary { background: #FF8C42; color: white; margin: 8px; padding: 12px; border-radius: 8px; }
 .summary-row { display: flex; justify-content: space-between; margin: 3px 0; font-size: 14px; }
 .summary-net { font-size: 16px; font-weight: bold; border-top: 1px solid white; padding-top: 4px; margin-top: 4px; }
-.btn-small { background: white; color: #FF6B35; border: none; padding: 6px 10px; border-radius: 5px; margin: 2px; cursor: pointer; position: relative; z-index: 2; font-size: 12px; }
-.card { background: white; margin: 8px; padding: 12px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: relative; z-index: 1; }
+.btn-small { background: white; color: #FF6B35; border: none; padding: 6px 10px; border-radius: 5px; margin: 2px; cursor: pointer; font-size: 12px; }
+.card { background: white; margin: 8px; padding: 12px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 .card h3 { font-size: 16px; margin-bottom: 8px; }
-.btn { background: #FF6B35; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; position: relative; z-index: 2; font-size: 14px; }
-.btn:active { background: #E55A2B; }
-.btn:disabled { background: #ccc; cursor: not-allowed; opacity: 0.6; }
-input { padding: 6px; border: 1px solid #ddd; border-radius: 5px; margin: 3px; position: relative; z-index: 2; font-size: 14px; }
-.category-tabs { display: flex; gap: 4px; margin-bottom: 8px; overflow-x: auto; padding-bottom: 4px; }
-.cat-btn { background: #eee; border: none; padding: 6px 12px; border-radius: 15px; white-space: nowrap; cursor: pointer; position: relative; z-index: 2; font-size: 12px; }
-.cat-btn.active { background: #FF6B35; color: white; }
-.product-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
-.product-item { border: 1px solid #ddd; padding: 6px; border-radius: 6px; text-align: center; position: relative; }
-.stock-badge { position: absolute; top: 3px; right: 3px; background: #4CAF50; color: white; border-radius: 50%; width: 20px; height: 20px; line-height: 20px; font-size: 10px; }
-.stock-badge.low { background: #f44336; }
-.stock-badge.zero { background: #999; }
-.cart-badge { position: absolute; top: 3px; left: 3px; background: #FF6B35; color: white; border-radius: 50%; width: 20px; height: 20px; line-height: 20px; font-size: 10px; font-weight: bold; }
-.cart-item { display: flex; justify-content: space-between; margin: 4px 0; align-items: center; font-size: 14px; }
-.checkout-btn { width: 100%; margin-top: 8px; padding: 12px; font-size: 15px; }
-.print-btn { width: 100%; margin-top: 8px; padding: 12px; font-size: 15px; background: #4CAF50; }
-.prod-row { display: flex; justify-content: space-between; margin: 2px 0; font-size: 12px; }
-.cat-header { background: #FF6B35; color: white; padding: 4px 8px; margin: 8px 0 4px 0; border-radius: 4px; font-size: 12px; font-weight: bold; grid-column: 1 / -1; }
-@media print {
-  body * { visibility: hidden; }
-  #receipt, #receipt * { visibility: visible; }
-  #receipt { position: absolute; left: 0; top: 0; width: 100%; }
-.no-print { display: none!important; }
-}
-#receipt { display: none; font-family: 'Courier New', monospace; font-size: 12px; width: 280px; margin: 0 auto; }
-.receipt-center { text-align: center; }
-.receipt-line { border-top: 1px dashed #000; margin: 5px 0; }
-.receipt-row { display: flex; justify-content: space-between; }
+.btn { background: #FF6B35; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 14px; width: 100%; }
+input, select { padding: 8px; border: 1px solid #ddd; border-radius: 5px; margin: 3px 0; font-size: 14px; width: 100%; }
+.input-label { font-size: 10px; color: #666; margin-left: 3px; margin-bottom: 5px; }
+
+/* FOLDER STYLES */
+.folder { border: 1px solid #FF6B35; border-radius: 8px; margin: 8px 0; overflow: hidden; }
+.folder-header { background: #FF6B35; color: white; padding: 12px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+.folder-header:active { background: #E55A2B; }
+.folder-content { display: none; padding: 8px; background: #fff5f0; }
+.folder-content.active { display: block; }
+.arrow { transition: transform 0.3s; }
+.arrow.open { transform: rotate(90deg); }
+
+.cat-folder { border: 1px solid #FF8C42; border-radius: 6px; margin: 6px 0; overflow: hidden; }
+.cat-header { background: #FF8C42; color: white; padding: 10px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+.cat-header:active { background: #E55A2B; }
+.cat-content { display: none; padding: 6px; background: white; }
+.cat-content.active { display: block; }
+
+.product-box { border: 1px solid #ddd; padding: 8px; border-radius: 6px; margin: 6px 0; background: #fafafa; }
+.product-name { font-weight: bold; font-size: 13px; margin-bottom: 4px; }
+.product-info { display: flex; justify-content: space-between; font-size: 12px; margin: 4px 0; }
+.product-stock { color: #2196F3; font-weight: bold; }
+.product-price { color: #FF6B35; font-weight: bold; }
+.btn-group { display: flex; gap: 4px; margin-top: 6px; }
+.btn-edit { background: #FF9800; color: white; border: none; padding: 6px; border-radius: 4px; cursor: pointer; font-size: 11px; flex: 1; }
+.btn-log { background: #4CAF50; color: white; border: none; padding: 6px; border-radius: 4px; cursor: pointer; font-size: 11px; flex: 1; }
+
+.log-item { border: 1px solid #eee; padding: 6px; margin: 4px 0; border-radius: 4px; font-size: 11px; background: white; }
+.log-item-name { font-weight: bold; }
+.waste-text { color: #FF9800; font-weight: bold; }
+.wrapper-text { color: #2196F3; font-weight: bold; }
+
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 200; }
+.modal-content { background: white; margin: 50px auto; padding: 20px; border-radius: 8px; width: 90%; max-width: 400px; }
+.modal h3 { margin-bottom: 15px; }
+.modal-btns { display: flex; gap: 10px; margin-top: 15px; }
+.modal-btns button { flex: 1; }
 </style>
 </head>
 <body>
-<div class="header no-print">🥟 One SIOMAi POS</div>
-<div class="summary no-print">
+<div class="header">🥟 One SIOMAi POS V3</div>
+
+<div class="summary">
 <div class="summary-row"><span>Sales:</span><span>₱<span id="sales">0.00</span></span></div>
 <div class="summary-row"><span>Expenses:</span><span>₱<span id="expenses">0.00</span></span></div>
 <div class="summary-row"><span>Items Sold:</span><span><span id="itemsSold">0</span> pcs</span></div>
-<div class="summary-row"><span>Transactions:</span><span id="transCount">0</span></div>
 <div class="summary-row summary-net"><span>Net:</span><span>₱<span id="net">0.00</span></span></div>
 <button class="btn-small" onclick="resetDay()">Reset Day</button>
-<button class="btn-small" onclick="printReport()">Print Report</button>
-<button class="btn-small" onclick="manualBackup()">Backup</button>
 </div>
-<div class="card no-print">
-<h3>📦 Stock</h3>
-<div id="productionList" style="max-height:150px; overflow-y:auto;"></div>
-<button class="btn-small" onclick="addStock()">+ Add Stock</button>
+
+<div class="card">
+<!-- MAIN FOLDER: DAILY PRODUCTION -->
+<div class="folder">
+<div class="folder-header" onclick="toggleFolder('mainProd')">
+<span>📅 DAILY PRODUCTION</span>
+<span class="arrow" id="arrow-mainProd">▶</span>
 </div>
-<div class="card no-print">
-<h3>Add Expense</h3>
-<input id="expenseItem" placeholder="Item: yelo, uling">
-<input id="expenseAmt" type="number" placeholder="Amount">
-<button class="btn" onclick="addExpense()">Add</button>
+<div class="folder-content" id="mainProd">
+
+  <!-- SUB FOLDER: 65's -->
+  <div class="cat-folder">
+  <div class="cat-header" onclick="toggleFolder('cat65')">
+  <span>65's</span>
+  <span class="arrow" id="arrow-cat65">▶</span>
+  </div>
+  <div class="cat-content" id="cat65"></div>
+  </div>
+
+  <!-- SUB FOLDER: 30's -->
+  <div class="cat-folder">
+  <div class="cat-header" onclick="toggleFolder('cat30')">
+  <span>30's</span>
+  <span class="arrow" id="arrow-cat30">▶</span>
+  </div>
+  <div class="cat-content" id="cat30"></div>
+  </div>
+
+  <!-- SUB FOLDER: BIG SIOMAI -->
+  <div class="cat-folder">
+  <div class="cat-header" onclick="toggleFolder('catBig')">
+  <span>BIG SIOMAI</span>
+  <span class="arrow" id="arrow-catBig">▶</span>
+  </div>
+  <div class="cat-content" id="catBig"></div>
+  </div>
+
+  <!-- SUB FOLDER: DUMPLINGS -->
+  <div class="cat-folder">
+  <div class="cat-header" onclick="toggleFolder('catDumps')">
+  <span>DUMPLINGS</span>
+  <span class="arrow" id="arrow-catDumps">▶</span>
+  </div>
+  <div class="cat-content" id="catDumps"></div>
+  </div>
+
+  <!-- SUB FOLDER: SIOPAO -->
+  <div class="cat-folder">
+  <div class="cat-header" onclick="toggleFolder('catSiopao')">
+  <span>SIOPAO</span>
+  <span class="arrow" id="arrow-catSiopao">▶</span>
+  </div>
+  <div class="cat-content" id="catSiopao"></div>
+  </div>
+
+  <!-- SUB FOLDER: SAUCE/EXTRAS -->
+  <div class="cat-folder">
+  <div class="cat-header" onclick="toggleFolder('catExtras')">
+  <span>SAUCE / EXTRAS</span>
+  <span class="arrow" id="arrow-catExtras">▶</span>
+  </div>
+  <div class="cat-content" id="catExtras"></div>
+  </div>
+
 </div>
-<div class="card no-print">
-<h3>Products</h3>
-<div class="category-tabs" id="categoryTabs">
-<button class="cat-btn active" onclick="filterCategory('All')">All</button>
-<button class="cat-btn" onclick="filterCategory('65\'s')">65's</button>
-<button class="cat-btn" onclick="filterCategory('30\'s')">30's</button>
-<button class="cat-btn" onclick="filterCategory('BIG SIOMAI')">BIG</button>
-<button class="cat-btn" onclick="filterCategory('DUMPLINGS')">DUMPLINGS</button>
-<button class="cat-btn" onclick="filterCategory('SIOPAO')">SIOPAO</button>
-<button class="cat-btn" onclick="filterCategory('SAUCE')">SAUCE</button>
 </div>
-<div id="productList" class="product-grid"></div>
 </div>
-<div class="card no-print">
-<h3>Cart</h3>
-<div id="cartItems"></div>
-<div class="summary-row"><strong>Total:</strong><strong>₱<span id="total">0.00</span></strong></div>
-<div class="summary-row"><span>Cash:</span><input id="cash" type="number" placeholder="0" oninput="calcChange()"></div>
-<div class="summary-row"><span>Change:</span><strong>₱<span id="change">0.00</span></strong></div>
-<button class="btn checkout-btn" onclick="checkout()">Checkout</button>
-<button class="btn print-btn" onclick="printReceipt()">🖨️ PRINT RECEIPT</button>
+
+<div class="card">
+<h3>📋 Today's Production Logs</h3>
+<div id="productionLogsList" style="max-height:300px;overflow-y:auto;"></div>
 </div>
-<div id="receipt"></div>
+
+<!-- EDIT PRICE MODAL -->
+<div id="editPriceModal" class="modal">
+<div class="modal-content">
+<h3>✏️ Edit Price</h3>
+<div id="editProductName" style="font-weight:bold;margin-bottom:10px;"></div>
+<input id="newPrice" type="number" placeholder="New Price">
+<div class="modal-btns">
+<button class="btn" onclick="saveNewPrice()">Save</button>
+<button class="btn" style="background:#999" onclick="closeModal('editPriceModal')">Cancel</button>
+</div>
+</div>
+</div>
+
+<!-- LOG PRODUCTION MODAL -->
+<div id="logProdModal" class="modal">
+<div class="modal-content">
+<h3>📝 Log Production</h3>
+<div id="logProductName" style="font-weight:bold;margin-bottom:10px;"></div>
+<input id="logDate" type="date">
+<div class="input-label">Date</div>
+<input id="logQty" type="number" placeholder="500">
+<div class="input-label">Qty Produced (pcs)</div>
+<input id="logWaste" type="number" placeholder="5">
+<div class="input-label">Waste (grams) - Record only</div>
+<input id="logWrapper" type="number" placeholder="1750">
+<div class="input-label">Wrapper Used (grams)</div>
+<input id="logDesc" placeholder="Luto ni Juan - umaga">
+<div class="input-label">Ano ginawa / Notes</div>
+<div class="modal-btns">
+<button class="btn" onclick="saveProductionLog()">+ Log Production</button>
+<button class="btn" style="background:#999" onclick="closeModal('logProdModal')">Cancel</button>
+</div>
+</div>
+</div>
+
 <script>
-let sales = 0, expenses = 0, itemsSold = 0, transCount = 0;
-let cart = [];
-let lastTransaction = null;
-let currentCategory = 'All';
-let products = [
-{name: "Pork 65's", price: 150, stock: 10, emoji: "🥟", category: "65's"},
-{name: "Chicken 65's", price: 150, stock: 10, emoji: "🍗", category: "65's"},
-{name: "Beef 65's", price: 150, stock: 10, emoji: "🥩", category: "65's"},
-{name: "Shrimp 65's", price: 150, stock: 10, emoji: "🍤", category: "65's"},
-{name: "Pork 30's", price: 80, stock: 20, emoji: "🥟", category: "30's"},
-{name: "Chicken 30's", price: 80, stock: 20, emoji: "🍗", category: "30's"},
-{name: "Beef 30's", price: 80, stock: 20, emoji: "🥩", category: "30's"},
-{name: "Shrimp 30's", price: 80, stock: 20, emoji: "🍤", category: "30's"},
-{name: "Japanese 30's", price: 120, stock: 20, emoji: "🍙", category: "30's"},
-{name: "BIG Pork", price: 120, stock: 50, emoji: "🥟", category: "BIG SIOMAI"},
-{name: "BIG Chicken", price: 120, stock: 50, emoji: "🍗", category: "BIG SIOMAI"},
-{name: "BIG Beef", price: 120, stock: 50, emoji: "🥩", category: "BIG SIOMAI"},
-{name: "BIG Japanese", price: 150, stock: 50, emoji: "🍙", category: "BIG SIOMAI"},
-{name: "Gyoza", price: 110, stock: 15, emoji: "🥟", category: "DUMPLINGS"},
-{name: "Sharkspin", price: 110, stock: 15, emoji: "🦈", category: "DUMPLINGS"},
-{name: "JUMBO Asado", price: 200, stock: 30, emoji: "🥯", category: "SIOPAO"},
-{name: "JUMBO Bola", price: 200, stock: 30, emoji: "🥯", category: "SIOPAO"},
-{name: "MINI Asado", price: 200, stock: 40, emoji: "🥯", category: "SIOPAO"},
-{name: "MINI Bola", price: 200, stock: 40, emoji: "🥯", category: "SIOPAO"},
-{name: "Chili Garlic", price: 75, stock: 100, emoji: "🌶️", category: "SAUCE"},
-{name: "Siopao Sauce", price: 0, stock: 100, emoji: "🥫", category: "SAUCE"}
+var products = [
+  {id:1,name:'Pork 65\'s',price:160,stock:602,cat:'65\'s'},
+  {id:2,name:'Chicken 65\'s',price:150,stock:100,cat:'65\'s'},
+  {id:3,name:'Beef 65\'s',price:150,stock:100,cat:'65\'s'},
+  {id:5,name:'Pork 30\'s',price:80,stock:93,cat:'30\'s'},
+  {id:6,name:'Chicken 30\'s',price:80,stock:100,cat:'30\'s'},
+  {id:7,name:'Beef 30\'s',price:80,stock:100,cat:'30\'s'},
+  {id:8,name:'Pork Big Siomai',price:120,stock:86,cat:'BIG SIOMAI'},
+  {id:9,name:'Chicken Big Siomai',price:120,stock:100,cat:'BIG SIOMAI'},
+  {id:10,name:'Beef Big Siomai',price:120,stock:100,cat:'BIG SIOMAI'},
+  {id:11,name:'Japanese Big Siomai',price:150,stock:100,cat:'BIG SIOMAI'},
+  {id:12,name:'Sharksfin',price:110,stock:92,cat:'DUMPLINGS'},
+  {id:13,name:'Gyoza',price:110,stock:100,cat:'DUMPLINGS'},
+  {id:14,name:'Hakaw',price:280,stock:20,cat:'DUMPLINGS'},
+  {id:27,name:'Jumbo Asado',price:200,stock:50,cat:'SIOPAO'},
+  {id:30,name:'MINI SIOPAO',price:200,stock:100,cat:'SIOPAO'},
+  {id:31,name:'Mini Bola Bola',price:209,stock:100,cat:'SIOPAO'},
+  {id:32,name:'Mini ASADO',price:200,stock:100,cat:'SIOPAO'},
+  {id:19,name:'Chili Garlic',price:75,stock:999,cat:'EXTRAS'},
+  {id:28,name:'Siopao Sauce',price:0,stock:999,cat:'EXTRAS'},
+  {id:29,name:'Water',price:50,stock:100,cat:'EXTRAS'}
 ];
-function loadData() {
-let data = JSON.parse(localStorage.getItem('posData') || '{}');
-sales = data.sales || 0;
-expenses = data.expenses || 0;
-itemsSold = data.itemsSold || 0;
-transCount = data.transCount || 0;
-if (data.products && data.products.length > 0 && data.products[0].category) {
-products = data.products;
+
+var productionLogs = [];
+var currentEditId = null;
+var currentLogId = null;
+
+function toggleFolder(id){
+  var content = document.getElementById(id);
+  var arrow = document.getElementById('arrow-'+id);
+  if(content.classList.contains('active')){
+    content.classList.remove('active');
+    arrow.classList.remove('open');
+  }else{
+    content.classList.add('active');
+    arrow.classList.add('open');
+  }
 }
+
+function renderCategories(){
+  var cats = {
+    '65\'s':'cat65',
+    '30\'s':'cat30',
+    'BIG SIOMAI':'catBig',
+    'DUMPLINGS':'catDumps',
+    'SIOPAO':'catSiopao',
+    'EXTRAS':'catExtras'
+  };
+
+  for(var cat in cats){
+    var html = '';
+    var filtered = products.filter(p=>p.cat===cat);
+    for(var i=0;i<filtered.length;i++){
+      var p = filtered[i];
+      html += '<div class="product-box">';
+      html += '<div class="product-name">'+p.name+'</div>';
+      html += '<div class="product-info">';
+      html += '<span class="product-stock">Stock: '+p.stock+' pcs</span>';
+      html += '<span class="product-price">₱'+p.price+'</span>';
+      html += '</div>';
+      html += '<div class="btn-group">';
+      html += '<button class="btn-edit" onclick="openEditPrice('+p.id+')">✏️ Edit Price</button>';
+      html += '<button class="btn-log" onclick="openLogProduction('+p.id+')">📝 Log Production</button>';
+      html += '</div></div>';
+    }
+    document.getElementById(cats[cat]).innerHTML = html || '<div style="text-align:center;color:#999;padding:10px;">No products</div>';
+  }
+}
+
+function openEditPrice(id){
+  currentEditId = id;
+  var p = products.find(x=>x.id===id);
+  document.getElementById('editProductName').textContent = p.name;
+  document.getElementById('newPrice').value = p.price;
+  document.getElementById('editPriceModal').style.display = 'block';
+}
+
+function saveNewPrice(){
+  var newPrice = parseFloat(document.getElementById('newPrice').value);
+  if(isNaN(newPrice) || newPrice<0){alert('Enter valid price!');return}
+  var p = products.find(x=>x.id===currentEditId);
+  p.price = newPrice;
+  saveData();
+  renderCategories();
+  closeModal('editPriceModal');
+  alert('Price updated to ₱'+newPrice);
+}
+
+function openLogProduction(id){
+  currentLogId = id;
+  var p = products.find(x=>x.id===id);
+  document.getElementById('logProductName').textContent = p.name;
+  document.getElementById('logDate').valueAsDate = new Date();
+  document.getElementById('logQty').value = '';
+  document.getElementById('logWaste').value = '';
+  document.getElementById('logWrapper').value = '';
+  document.getElementById('logDesc').value = '';
+  document.getElementById('logProdModal').style.display = 'block';
+}
+
+function saveProductionLog(){
+  var date = document.getElementById('logDate').value;
+  var qty = parseInt(document.getElementById('logQty').value)||0;
+  var waste = parseInt(document.getElementById('logWaste').value)||0;
+  var wrapper = parseInt(document.getElementById('logWrapper').value)||0;
+  var desc = document.getElementById('logDesc').value.trim();
+
+  if(!date || qty<=0){
+    alert('Fill Date and Qty Produced!');
+    return;
+  }
+
+  var p = products.find(x=>x.id===currentLogId);
+
+  productionLogs.unshift({
+    id:Date.now(),
+    date:date,
+    productId:p.id,
+    productName:p.name,
+    qty:qty,
+    waste:waste,
+    wrapper:wrapper,
+    desc:desc
+  });
+
+  // WASTE = GRAMS LANG, HINDI BAWAS SA STOCK
+  p.stock += qty;
+
+  saveData();
+  renderCategories();
+  renderProductionLogs();
+  closeModal('logProdModal');
+  alert('Production logged! +'+qty+' added to '+p.name+' stock');
+}
+
+function renderProductionLogs(){
+  var html = '';
+  var today = new Date().toISOString().split('T')[0];
+  var todayLogs = productionLogs.filter(log => log.date === today);
+
+  if(todayLogs.length===0){
+    html = '<div style="font-size:11px;color:#999;text-align:center;">No production today</div>';
+  } else {
+    for(var i=0;i<todayLogs.length;i++){
+      var log = todayLogs[i];
+      html += '<div class="log-item">';
+      html += '<div class="log-item-name">'+log.productName+' - '+log.qty+'pcs';
+      if(log.waste>0) html += ' <span class="waste-text">(waste: '+log.waste+'g)</span>';
+      if(log.wrapper>0) html += ' <span class="wrapper-text">[wrapper: '+log.wrapper+'g]</span>';
+      html += '</div>';
+      if(log.desc) html += '<div style="color:#666;font-size:10px;">'+log.desc+'</div>';
+      html += '<div style="color:#999;font-size:9px;">'+log.date+'</div>';
+      html += '</div>';
+    }
+  }
+  document.getElementById('productionLogsList').innerHTML = html;
+}
+
+function closeModal(id){
+  document.getElementById(id).style.display = 'none';
+}
+
+function saveData(){
+  localStorage.setItem('products',JSON.stringify(products));
+  localStorage.setItem('productionLogs',JSON.stringify(productionLogs));
+}
+
+function resetDay(){
+  if(confirm('Reset all logs for new day?')){
+    productionLogs = [];
+    saveData();
+    renderProductionLogs();
+  }
+}
+
+function updateSummary(){
+  // Simple lang for now
+  document.getElementById('sales').textContent = '0.00';
+  document.getElementById('expenses').textContent = '0.00';
+  document.getElementById('net').textContent = '0.00';
+  document.getElementById('itemsSold').textContent = '0';
+  document.getElementById('transCount').textContent = '0';
+}
+
+// AUTO RUN
+var savedProducts = localStorage.getItem('products');
+if(savedProducts) products = JSON.parse(savedProducts);
+var savedLogs = localStorage.getItem('productionLogs');
+if(savedLogs) productionLogs = JSON.parse(savedLogs);
+
+renderCategories();
+renderProductionLogs();
 updateSummary();
-renderProducts();
-renderProduction();
-}
-function saveData() {
-localStorage.setItem('posData', JSON.stringify({sales, expenses, itemsSold, transCount, products}));
-}
-function updateSummary() {
-document.getElementById('sales').textContent = sales.toFixed(2);
-document.getElementById('expenses').textContent = expenses.toFixed(2);
-document.getElementById('itemsSold').textContent = itemsSold;
-document.getElementById('transCount').textContent = transCount;
-document.getElementById('net').textContent = (sales - expenses).toFixed(2);
-}
-function renderProduction() {
-let html = '';
-products.forEach(p => {
-let color = p.stock <= 5? 'color:red; font-weight:bold;' : '';
-html += `<div class="prod-row" style="${color}">
-<span>${p.emoji} ${p.name}</span>
-<span>${p.stock}</span>
-</div>`;
-});
-document.getElementById('productionList').innerHTML = html;
-}
-function addStock() {
-let name = prompt('Product name na dadagdagan ng stock:');
-let qty = parseInt(prompt('Ilang piraso idadagdag?'));
-if (!name ||!qty) return;
-let p = products.find(prod => prod.name.toLowerCase() === name.toLowerCase());
-if (p) {
-p.stock += qty;
-saveData();
-renderProduction();
-renderProducts();
-alert(`Stock added! ${p.name} = ${p.stock} pcs na`);
-} else {
-alert('Product not found!');
-}
-}
-function filterCategory(cat) {
-currentCategory = cat;
-document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
-event.target.classList.add('active');
-renderProducts();
-}
-function renderProducts() {
-let html = '';
-let filtered = currentCategory === 'All'? products : products.filter(p => p.category === currentCategory);
-if (currentCategory === 'All') {
-let categories = ['65\'s', '30\'s', 'BIG SIOMAI', 'DUMPLINGS', 'SIOPAO', 'SAUCE'];
-categories.forEach(cat => {
-let catProducts = products.filter(p => p.category === cat);
-if (catProducts.length > 0) {
-html += `<div class="cat-header">${cat}</div>`;
-catProducts.forEach((p) => {
-html += renderProductItem(p);
-});
-}
-});
-} else {
-filtered.forEach((p) => {
-html += renderProductItem(p);
-});
-}
-document.getElementById('productList').innerHTML = html || '<p>No products</p>';
-}
-function renderProductItem(p) {
-let realIndex = products.findIndex(prod => prod.name === p.name);
-let badgeClass = p.stock === 0? 'stock-badge zero' : p.stock <= 5? 'stock-badge low' : 'stock-badge';
-let priceText = p.price === 0? 'FREE' : '₱' + p.price;
-let cartItem = cart.find(item => item.name === p.name);
-let cartQty = cartItem? cartItem.qty : 0;
-let cartBadge = cartQty > 0? `<div class="cart-badge">${cartQty}</div>` : '';
-return `<div class="product-item">
-${cartBadge}
-<div class="${badgeClass}">${p.stock}</div>
-<div style="font-size:24px;">${p.emoji}</div>
-<div style="font-size:11px; font-weight:bold; margin:2px 0;">${p.name}</div>
-<div style="color:#FF6B35; font-size:14px; margin:2px 0;">${priceText}</div>
-<button class="btn" onclick="addToCart(${realIndex})" style="width:100%; padding:6px; font-size:12px;">+ Add</button>
-</div>`;
-}
-function addToCart(i) {
-let p = products[i];
-if (p.stock < 1) {
-alert('Out of stock! Add stock muna sa taas');
-return;
-}
-let existingItem = cart.find(item => item.name === p.name);
-if (existingItem) {
-existingItem.qty += 1;
-} else {
-cart.push({name: p.name, price: p.price, qty: 1, emoji: p.emoji});
-}
-p.stock -= 1;
-renderCart();
-renderProducts();
-renderProduction();
-}
-function renderCart() {
-let html = '';
-let total = 0;
-cart.forEach((item, i) => {
-let itemTotal = item.price * item.qty;
-let priceText = item.price === 0? 'FREE' : '₱' + itemTotal;
-html += `<div class="cart-item">
-<span>${item.emoji} ${item.name} x${item.qty}</span>
-<span>${priceText} <button onclick="removeItem(${i})" style="background:red;color:white;border:none;border-radius:3px;padding:1px 5px;font-size:12px;">X</button></span>
-</div>`;
-total += itemTotal;
-});
-document.getElementById('cartItems').innerHTML = html || '<i>Cart is empty</i>';
-document.getElementById('total').textContent = total.toFixed(2);
-calcChange();
-}
-function removeItem(i) {
-let item = cart[i];
-let product = products.find(p => p.name === item.name);
-if (product) product.stock += item.qty;
-cart.splice(i,1);
-renderCart();
-renderProducts();
-renderProduction();
-}
-function calcChange() {
-let total = parseFloat(document.getElementById('total').textContent);
-let cash = parseFloat(document.getElementById('cash').value) || 0;
-document.getElementById('change').textContent = Math.max(0, cash - total).toFixed(2);
-}
-function checkout() {
-let total = parseFloat(document.getElementById('total').textContent);
-if (total == 0) {
-alert('Cart is empty!');
-return;
-}
-let cash = parseFloat(document.getElementById('cash').value) || 0;
-if (cash < total) {
-alert('Not enough cash!');
-return;
-}
-lastTransaction = {
-cart: JSON.parse(JSON.stringify(cart)),
-total: total,
-cash: cash,
-change: cash - total,
-date: new Date().toLocaleString()
-};
-let totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-sales += total;
-itemsSold += totalQty;
-transCount += 1;
-updateSummary();
-saveData();
-alert('Transaction saved! Click PRINT RECEIPT now to print.');
-cart = [];
-document.getElementById('cash').value = '';
-renderCart();
-renderProducts();
-}
-function printReceipt() {
-if (!lastTransaction || lastTransaction.cart.length === 0) {
-alert('Walang transaction! Mag-Checkout ka muna boss!');
-return;
-}
-let receiptHTML = `
-<div class="receipt-center">
-<strong>ONE SIOMAI</strong><br>
-Valenzuela City
-</div>
-<div class="receipt-line"></div>
-${lastTransaction.date}
-<div class="receipt-line"></div>
-`;
-lastTransaction.cart.forEach(i => {
-let itemTotal = i.price * i.qty;
-receiptHTML += `<div class="receipt-row">
-<span>${i.name} x${i.qty}</span>
-<span>₱${itemTotal}</span>
-</div>`;
-});
-receiptHTML += `
-<div class="receipt-line"></div>
-<div class="receipt-row"><strong>TOTAL:</strong><strong>₱${lastTransaction.total.toFixed(2)}</strong></div>
-<div class="receipt-row"><span>CASH:</span><span>₱${lastTransaction.cash.toFixed(2)}</span></div>
-<div class="receipt-row"><strong>CHANGE:</strong><strong>₱${lastTransaction.change.toFixed(2)}</strong></div>
-<div class="receipt-line"></div>
-<div class="receipt-center">Thank you!</div>
-`;
-document.getElementById('receipt').innerHTML = receiptHTML;
-window.print();
-}
-function addExpense() {
-let item = document.getElementById('expenseItem').value;
-let amt = parseFloat(document.getElementById('expenseAmt').value);
-if (!item ||!amt) {
-alert('Fill both fields!');
-return;
-}
-expenses += amt;
-document.getElementById('expenseItem').value = '';
-document.getElementById('expenseAmt').value = '';
-updateSummary();
-saveData();
-alert(`Expense added: ${item} - ₱${amt}`);
-}
-function resetDay() {
-if (confirm('Reset all data for new day? This will clear Sales, Expenses, Items Sold, Transactions and restore stocks.')) {
-sales = 0;
-expenses = 0;
-itemsSold = 0;
-transCount = 0;
-products = [
-{name: "Pork 65's", price: 150, stock: 10, emoji: "🥟", category: "65's"},
-{name: "Chicken 65's", price: 150, stock: 10, emoji: "🍗", category: "65's"},
-{name: "Beef 65's", price: 150, stock: 10, emoji: "🥩", category: "65's"},
-{name: "Shrimp 65's", price: 150, stock: 10, emoji: "🍤", category: "65's"},
-{name: "Pork 30's", price: 80, stock: 20, emoji: "🥟", category: "30's"},
-{name: "Chicken 30's", price: 80, stock: 20, emoji: "🍗", category: "30's"},
-{name: "Beef 30's", price: 80, stock: 20, emoji: "🥩", category: "30's"},
-{name: "Shrimp 30's", price: 80, stock: 20, emoji: "🍤", category: "30's"},
-{name: "Japanese 30's", price: 120, stock: 20, emoji: "🍙", category: "30's"},
-{name: "BIG Pork", price: 120, stock: 50, emoji: "🥟", category: "BIG SIOMAI"},
-{name: "BIG Chicken", price: 120, stock: 50, emoji: "🍗", category: "BIG SIOMAI"},
-{name: "BIG Beef", price: 120, stock: 50, emoji: "🥩", category: "BIG SIOMAI"},
-{name: "BIG Japanese", price: 150, stock: 50, emoji: "🍙", category: "BIG SIOMAI"},
-{name: "Gyoza", price: 110, stock: 15, emoji: "🥟", category: "DUMPLINGS"},
-{name: "Sharkspin", price: 110, stock: 15, emoji: "🦈", category: "DUMPLINGS"},
-{name: "JUMBO Asado", price: 200, stock: 30, emoji: "🥯", category: "SIOPAO"},
-{name: "JUMBO Bola", price: 200, stock: 30, emoji: "🥯", category: "SIOPAO"},
-{name: "MINI Asado", price: 200, stock: 40, emoji: "🥯", category: "SIOPAO"},
-{name: "MINI Bola", price: 200, stock: 40, emoji: "🥯", category: "SIOPAO"},
-{name: "Chili Garlic", price: 75, stock: 100, emoji: "🌶️", category: "SAUCE"},
-{name: "Siopao Sauce", price: 0, stock: 100, emoji: "🥫", category: "SAUCE"}
-];
-cart = [];
-updateSummary();
-saveData();
-renderProducts();
-renderCart();
-renderProduction();
-alert('Day reset complete! Stock restored.');
-}
-}
-function printReport() {
-let report = `=== DAILY REPORT ===\n`;
-report += `Date: ${new Date().toLocaleDateString()}\n\n`;
-report += `Sales: ₱${sales.toFixed(2)}\n`;
-report += `Expenses: ₱${expenses.toFixed(2)}\n`;
-report += `Items Sold: ${itemsSold} pcs\n`;
-report += `Transactions: ${transCount}\n`;
-report += `NET INCOME: ₱${(sales-expenses).toFixed(2)}\n\n`;
-report += `=== STOCK LEFT ===\n`;
-products.forEach(p => {
-report += `${p.name}: ${p.stock}\n`;
-});
-alert(report);
-}
-function manualBackup() {
-let data = localStorage.getItem('posData');
-let blob = new Blob([data], {type: 'application/json'});
-let url = URL.createObjectURL(blob);
-let a = document.createElement('a');
-a.href = url;
-a.download = `siomai-pos-backup-${new Date().toISOString().split('T')[0]}.json`;
-a.click();
-alert('Backup downloaded!');
-}
-loadData();
-if ('serviceWorker' in navigator) {
-navigator.serviceWorker.register('sw.js');
-}
 </script>
 </body>
 </html>
